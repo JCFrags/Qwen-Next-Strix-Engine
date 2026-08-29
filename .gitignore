@@ -1,0 +1,40 @@
+# Build output
+/build*/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+compile_commands.json
+
+# Models and generated data
+*.gguf
+*.safetensors
+*.bin
+models/
+results/raw/
+logs/
+*.log
+core
+core.*
+
+# Host-local state and credentials
+.env
+.env.*
+!.env.example
+*.pid
+*.sock
+*.token
+*.key
+*.pem
+
+# Editor and operating-system files
+.vscode/
+.idea/
+.DS_Store
+*~
+*.swp
+
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
