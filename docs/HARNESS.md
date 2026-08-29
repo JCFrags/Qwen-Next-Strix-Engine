@@ -8,13 +8,14 @@ The fixed profile is [`harness/qwen38_matrix.json`](../harness/qwen38_matrix.jso
 
 Do not put a credential, private host name, user name, absolute private path, model path, prompt text, expected answer, or Pi session data in a result file. Use a lowercase SHA-256 receipt for private source evidence. Use a SHA-256 host fingerprint instead of a host name. Keep raw private logs outside the harness output.
 
-The harness uses only the Python standard library. It does not use the network.
+The evaluator uses only the Python standard library. It does not use the network. The separate recurrent prompt-cache runner uses the standard library to call only the server URL that the operator supplies. See [`RECURRENT_CACHE_GATE.md`](RECURRENT_CACHE_GATE.md).
 
 ## Files
 
 - `harness/qwen38_harness.py`: strict parser, validator, pair evaluator, and CLI.
 - `harness/qwen38_matrix.json`: versioned fixed gate profile.
-- `tests/`: offline parser and evaluator tests.
+- `harness/recurrent_cache_gate.py`: private four-request recurrent prompt-cache runner.
+- `tests/`: offline parser, evaluator, and mocked runner tests.
 
 An adapter owns these generated files:
 
