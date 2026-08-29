@@ -23,4 +23,10 @@ The project is experimental. A high configured context limit or coherent short o
 
 ## Repository state
 
-The repository is being initialized. Source intake, the test harness, pinned runtime identities, and experiment records will be added as the first milestone completes.
+The repository now contains:
+
+- reviewed source-intake and backend-matrix documents;
+- a correctness-first evidence evaluator and offline tests;
+- public build-validation receipts for the pinned mainline HIP and Vulkan builds.
+
+The build receipts prove clean source, artifact identity, and backend-operation tests only. Model correctness and matched performance qualification remain in progress.
