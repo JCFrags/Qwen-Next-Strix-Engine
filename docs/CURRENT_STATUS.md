@@ -21,5 +21,10 @@ The strict four-request recurrent gate and the real 12-tool Pi loop passed. No c
 | Candidate v1 patch | `INACTIVE_EXPERIMENTAL` | Preserved only for review and future correction work. |
 | Candidate v2 `rs0` | `OMITTED` | It did not change runtime behavior. |
 | Candidate v3 graph patch | `INACTIVE_EXPERIMENTAL` | Short identity passed. Long-context pure MTP still diverged from OFF. |
+| Candidate v5 GDN sequencing | `INACTIVE_EXPERIMENTAL` | The GDN guard ran, but strict output still diverged. Layer 0 creates the first hidden-row difference. |
 
-Candidate v3 is documented in [`receipts/MTP_V3_BLOCKER.md`](receipts/MTP_V3_BLOCKER.md). It corrected the short target multi-row graph but did not pass the strict 47.7K MTP identity gate. The launch template remains [`../scripts/launch-working-base.sh`](../scripts/launch-working-base.sh). It pins the accepted MTP-OFF binary, model bytes, and inference arguments.
+Candidate v3 is documented in [`receipts/MTP_V3_BLOCKER.md`](receipts/MTP_V3_BLOCKER.md). It corrected the short target multi-row graph but did not pass the strict 47.7K MTP identity gate.
+
+Candidate v5 is documented in [`receipts/MTP_V5_LAYER_BOUNDARY.md`](receipts/MTP_V5_LAYER_BOUNDARY.md). It proved that GDN-only sequencing is insufficient. The layer 0 input matched OFF, but the layer 1 input did not. The next experiment must use complete one-row target verification or isolate the exact layer 0 sub-boundary.
+
+The launch template remains [`../scripts/launch-working-base.sh`](../scripts/launch-working-base.sh). It pins the accepted MTP-OFF binary, model bytes, and inference arguments.

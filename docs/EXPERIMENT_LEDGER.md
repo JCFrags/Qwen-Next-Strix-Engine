@@ -10,6 +10,8 @@ Public entries contain decisions and safe aggregate evidence only. Private promp
 | 2026-08-29 | Candidate v2 `rs0` | MTP rollback experiment | `NO_RUNTIME_CHANGE` | Do not export. Do not claim a rollback correction. |
 | 2026-08-29 | Candidate v3 `53a2643…` | Corrected Qwen4Exp multi-row graph; short n-gram and pure-MTP controls | `PASS_SHORT_IDENTITY` | Full bytes matched OFF at MTP maxima 1 and 4. This result did not qualify long context. |
 | 2026-08-29 | Candidate v3 `53a2643…` | Exact Q4_K_XL, 65,536, 4,096/2,052, strict 47.7K MTP OFF/ON | `BLOCKED_LONG_CONTEXT_OUTPUT_IDENTITY` | OFF passed four requests. Pure MTP diverged on request 1 at byte offset 145 after 42 accepted and 10 rejected drafts. Keep MTP disabled. |
+| 2026-08-29 | Candidate v5 `9817f8c…` | Sequential GDN helper, exact Q4_K_XL, strict 47.7K MTP OFF/ON | `BLOCKED_LONG_CONTEXT_OUTPUT_IDENTITY` | The v5 guard ran in all recurrent layers. Request 1 still diverged at byte offset 145 after 42 accepted and 9 rejected drafts. |
+| 2026-08-29 | Candidate v5 layer diagnostic `e5a1a2b…` | Complete 10,240-float target row, fresh OFF/ON processes, one selected layer per run | `BLOCKED_AFTER_LAYER_0` | Layer 0 input matched. Layer 1 input differed. Complete layer 0 processing creates the first hidden-row difference. |
 | 2026-08-29 | Vision | Working-base runtime | `UNQUALIFIED` | Projector omitted. |
 | 2026-08-29 | Higher context | Above 65,536 | `UNQUALIFIED` | Requires a new strict campaign. |
 
