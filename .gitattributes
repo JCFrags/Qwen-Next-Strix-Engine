@@ -1,0 +1,2 @@
+# Literal git format-patch files contain required one-column diff markers.
+*.patch -whitespace

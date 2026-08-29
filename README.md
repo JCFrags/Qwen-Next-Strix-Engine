@@ -27,6 +27,9 @@ The repository now contains:
 
 - reviewed source-intake and backend-matrix documents;
 - a correctness-first evidence evaluator and offline tests;
-- public build-validation receipts for the pinned mainline HIP and Vulkan builds.
+- public build-validation receipts for the pinned mainline HIP and Vulkan builds;
+- a reproducible, host-neutral [working-base launch profile](docs/WORKING_BASE.md);
+- the reviewed [working-base receipt](docs/receipts/WORKING_BASE_V1.md), [current status](docs/CURRENT_STATUS.md), and [experiment ledger](docs/EXPERIMENT_LEDGER.md);
+- an attributed, inactive [experimental MTP candidate patch](patches/experimental/mtp-v1/README.md).
 
-The build receipts prove clean source, artifact identity, and backend-operation tests only. Model correctness and matched performance qualification remain in progress.
+The exact base profile passed the strict recurrent cache gate and a real 12-tool Pi loop. MTP is blocked and disabled. Vision and context above 65,536 tokens remain unqualified.
