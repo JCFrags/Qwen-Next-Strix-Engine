@@ -24,6 +24,7 @@ REQUEST_COUNT = 4
 MIN_REQUIRED_CACHED_TOKENS = 45_000
 MAX_RESPONSE_BYTES = 64 * 1024 * 1024
 TIMING_FIELDS = (
+    "cache_n",
     "prompt_n",
     "prompt_ms",
     "prompt_per_token_ms",
@@ -359,7 +360,7 @@ def common_prefix_count(previous: list[int] | None, current: list[int]) -> int:
 def validate_completion(
     value: dict[str, Any],
     token_count: int,
-) -> tuple[str, int, dict[str, int | float]]:
+) -> tuple[str, int, int, dict[str, int | float]]:
     content = value.get("content")
     if not isinstance(content, str):
         raise GateError("malformed_response")
@@ -373,7 +374,7 @@ def validate_completion(
     if truncated or stop_type == "limit":
         raise GateError("truncated")
 
-    tokens_cached = _require_nonnegative_int(
+    slot_cache_tokens = _require_nonnegative_int(
         value.get("tokens_cached"), "malformed_response"
     )
     tokens_evaluated = _require_nonnegative_int(
@@ -382,13 +383,13 @@ def validate_completion(
     tokens_predicted = _require_nonnegative_int(
         value.get("tokens_predicted"), "malformed_response"
     )
-    if tokens_evaluated != token_count or tokens_cached > tokens_evaluated:
+    if tokens_evaluated != token_count:
         raise GateError("malformed_response")
 
     timings_value = _require_object(value.get("timings"), "malformed_response")
     timings: dict[str, int | float] = {}
     for name in TIMING_FIELDS:
-        if name in {"prompt_n", "predicted_n"}:
+        if name in {"cache_n", "prompt_n", "predicted_n"}:
             timings[name] = _require_nonnegative_int(
                 timings_value.get(name), "malformed_response"
             )
@@ -396,9 +397,12 @@ def validate_completion(
             timings[name] = _require_number(
                 timings_value.get(name), "malformed_response"
             )
-    if timings["predicted_n"] != tokens_predicted:
+    if (
+        timings["predicted_n"] != tokens_predicted
+        or timings["cache_n"] + timings["prompt_n"] != tokens_evaluated
+    ):
         raise GateError("malformed_response")
-    return content, tokens_cached, timings
+    return content, int(timings["cache_n"]), slot_cache_tokens, timings
 
 
 def validate_visible_output(content: str, expected: str, markers: list[str]) -> None:
@@ -414,7 +418,8 @@ def _request_summary(
     prompt: str,
     tokens: list[int],
     prefix_count: int,
-    cached_tokens: int,
+    reused_prompt_tokens: int,
+    slot_cache_tokens: int,
     threshold: int,
     timings: dict[str, int | float],
 ) -> dict[str, Any]:
@@ -423,11 +428,14 @@ def _request_summary(
         "prompt_sha256": hashlib.sha256(prompt.encode("utf-8")).hexdigest(),
         "prompt_tokens": len(tokens),
         "previous_common_prefix_tokens": prefix_count,
-        "cached_tokens": cached_tokens,
+        "reused_prompt_tokens": reused_prompt_tokens,
+        "slot_cache_tokens": slot_cache_tokens,
         "cache_threshold_applies": position > 1,
         "common_prefix_threshold_met": position == 1 or prefix_count >= threshold,
-        "cache_threshold_met": position == 1 or cached_tokens >= threshold,
-        "cache_within_common_prefix": position == 1 or cached_tokens <= prefix_count,
+        "cache_threshold_met": position == 1 or reused_prompt_tokens >= threshold,
+        "cache_within_common_prefix": (
+            position == 1 or reused_prompt_tokens <= prefix_count
+        ),
         "visible_output_valid": True,
         "timings": timings,
     }
@@ -501,9 +509,12 @@ def run_gate(
                 completion_body,
                 f"{position:02d}-completion.json",
             )
-            content, cached_tokens, timings = validate_completion(
-                completion, len(tokens)
-            )
+            (
+                content,
+                reused_prompt_tokens,
+                slot_cache_tokens,
+                timings,
+            ) = validate_completion(completion, len(tokens))
             validate_visible_output(content, marker, markers)
             records.append(
                 _request_summary(
@@ -511,16 +522,17 @@ def run_gate(
                     prompt,
                     tokens,
                     prefix_count,
-                    cached_tokens,
+                    reused_prompt_tokens,
+                    slot_cache_tokens,
                     minimum_cached_tokens,
                     timings,
                 )
             )
             if position > 1 and prefix_count < minimum_cached_tokens:
                 raise GateError("common_prefix_below_threshold")
-            if position > 1 and cached_tokens < minimum_cached_tokens:
+            if position > 1 and reused_prompt_tokens < minimum_cached_tokens:
                 raise GateError("cache_below_threshold")
-            if position > 1 and cached_tokens > prefix_count:
+            if position > 1 and reused_prompt_tokens > prefix_count:
                 raise GateError("cache_exceeds_common_prefix")
             previous_tokens = tokens
     except GateError as exc:

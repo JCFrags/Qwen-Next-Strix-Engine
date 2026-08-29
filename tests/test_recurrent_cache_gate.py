@@ -23,9 +23,11 @@ SHARED_PREFIX = list(range(PREFIX_LENGTH))
 TOKEN_LISTS = [SHARED_PREFIX + [200 + index] for index in range(1, 5)]
 
 
-def timings() -> dict[str, int | float]:
+def timings(index: int) -> dict[str, int | float]:
+    cache_n = 0 if index == 0 else PREFIX_LENGTH
     return {
-        "prompt_n": 1,
+        "cache_n": cache_n,
+        "prompt_n": len(TOKEN_LISTS[index]) - cache_n,
         "prompt_ms": 2.0,
         "prompt_per_token_ms": 2.0,
         "prompt_per_second": 0.5,
@@ -43,10 +45,10 @@ def completion(index: int) -> dict[str, Any]:
         "stop": True,
         "stop_type": "eos",
         "truncated": False,
-        "tokens_cached": 0 if index == 0 else PREFIX_LENGTH,
+        "tokens_cached": len(TOKEN_LISTS[index]) + 1,
         "tokens_evaluated": len(TOKEN_LISTS[index]),
         "tokens_predicted": 2,
-        "timings": timings(),
+        "timings": timings(index),
     }
 
 
@@ -145,8 +147,12 @@ class GateTests(unittest.TestCase):
             [0, PREFIX_LENGTH, PREFIX_LENGTH, PREFIX_LENGTH],
         )
         self.assertEqual(
-            [item["cached_tokens"] for item in summary["requests"]],
-            [0, PREFIX_LENGTH, PREFIX_LENGTH, PREFIX_LENGTH]
+            [item["reused_prompt_tokens"] for item in summary["requests"]],
+            [0, PREFIX_LENGTH, PREFIX_LENGTH, PREFIX_LENGTH],
+        )
+        self.assertEqual(
+            [item["slot_cache_tokens"] for item in summary["requests"]],
+            [len(tokens) + 1 for tokens in TOKEN_LISTS],
         )
         self.assertTrue(all(len(item["prompt_sha256"]) == 64 for item in summary["requests"]))
 
@@ -190,7 +196,8 @@ class GateTests(unittest.TestCase):
 
     def test_low_cache_reuse_fails(self) -> None:
         fake = FakeTransport()
-        fake.completions[2]["tokens_cached"] = PREFIX_LENGTH - 1
+        fake.completions[2]["timings"]["cache_n"] = PREFIX_LENGTH - 1
+        fake.completions[2]["timings"]["prompt_n"] = 2
         exit_code, summary, _output = self.execute(fake)
         self.assertEqual(exit_code, gate.EXIT_GATE_FAILED)
         self.assertEqual(summary["failures"], ["cache_below_threshold"])
@@ -221,7 +228,8 @@ class GateTests(unittest.TestCase):
 
     def test_cache_cannot_exceed_common_prefix(self) -> None:
         fake = FakeTransport()
-        fake.completions[1]["tokens_cached"] = PREFIX_LENGTH + 1
+        fake.completions[1]["timings"]["cache_n"] = PREFIX_LENGTH + 1
+        fake.completions[1]["timings"]["prompt_n"] = 0
         exit_code, summary, _output = self.execute(fake)
         self.assertEqual(exit_code, gate.EXIT_GATE_FAILED)
         self.assertEqual(summary["failures"], ["cache_exceeds_common_prefix"])

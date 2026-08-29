@@ -49,11 +49,11 @@ The runner uses one base URL and slot zero. It performs these calls in order:
    3. `POST /completion` with the same rendered prompt. The runner maps `max_tokens` or `max_completion_tokens` to `n_predict`. It copies the validated deterministic `temperature`, `seed`, and optional `top_k`, `top_p`, `min_p`, and `stop` settings. It also sets `stream: false`, `cache_prompt: true`, `id_slot: 0`, and `timings_per_token: true`.
 3. `GET /health` again, including after a request failure when the first health call started.
 
-The completion response must report slot zero, a completed stop, `truncated: false`, a stop type other than `limit`, nonnegative token counts, and the standard prompt and prediction timing fields. `tokens_evaluated` must equal the separate `/tokenize` token count. The runner rejects missing, incorrectly typed, non-finite, or inconsistent fields.
+The completion response must report slot zero, a completed stop, `truncated: false`, a stop type other than `limit`, nonnegative token counts, and the standard cache, prompt, and prediction timing fields. `tokens_evaluated` must equal the separate `/tokenize` token count. `timings.cache_n` is the number of prompt tokens that the server reused. `timings.prompt_n` is the number of prompt tokens that it processed. Their sum must equal `tokens_evaluated`. The native top-level `tokens_cached` field is the resulting slot cache size after generation. It is recorded as `slot_cache_tokens`, but it is not a prompt-reuse count. The runner rejects missing, incorrectly typed, non-finite, or inconsistent fields.
 
 For output validation, the runner takes the text after the last `</think>` and removes outer whitespace. That visible text must equal the request's expected marker. It must not contain any other configured marker.
 
-The runner records the SHA-256 of the exact UTF-8 rendered prompt. It also records the token count and the common-prefix token count against only the immediately previous request. Requests two, three, and four must each have a planned common prefix and a reported `tokens_cached` value at or above `--minimum-cached-tokens`. The runner rejects a threshold below 45,000 tokens. A reported cache count cannot exceed the planned common prefix.
+The runner records the SHA-256 of the exact UTF-8 rendered prompt. It also records the token count and the common-prefix token count against only the immediately previous request. Requests two, three, and four must each have a planned common prefix and a `timings.cache_n` reuse count at or above `--minimum-cached-tokens`. The runner rejects a threshold below 45,000 tokens. A prompt-reuse count cannot exceed the planned common prefix.
 
 ## Run
 
@@ -71,7 +71,7 @@ python3 harness/recurrent_cache_gate.py \
 
 The output directory must be empty or absent. The runner sets directory mode `0700` and file mode `0600` where the operating system supports these modes. It writes raw health, template, tokenize, and completion responses only there.
 
-`public-summary.json` and standard output contain no request path, base URL, prompt text, visible output, expected marker, or raw response. The public summary contains only the decision, safe failure codes, health booleans, prompt SHA-256 values, token counts, cache counts, prefix counts, and numeric timings.
+`public-summary.json` and standard output contain no request path, base URL, prompt text, visible output, expected marker, or raw response. The public summary contains only the decision, safe failure codes, health booleans, prompt SHA-256 values, prompt-reuse counts, slot cache counts, prefix counts, and numeric timings.
 
 Exit code `0` means all checks passed. Exit code `2` means local input or output setup was invalid. Exit code `10` means an endpoint, response, output, cache, truncation, or health check failed.
 
