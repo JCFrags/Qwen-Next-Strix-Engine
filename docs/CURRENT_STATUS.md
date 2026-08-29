@@ -20,5 +20,6 @@ The strict four-request recurrent gate and the real 12-tool Pi loop passed. No c
 | Context above 65,536 | `UNQUALIFIED` | Needs a new full qualification. |
 | Candidate v1 patch | `INACTIVE_EXPERIMENTAL` | Preserved only for review and future correction work. |
 | Candidate v2 `rs0` | `OMITTED` | It did not change runtime behavior. |
+| Candidate v3 graph patch | `INACTIVE_EXPERIMENTAL` | Short identity passed. Long-context pure MTP still diverged from OFF. |
 
-The launch template is [`../scripts/launch-working-base.sh`](../scripts/launch-working-base.sh). It pins the accepted binary, model bytes, and inference arguments.
+Candidate v3 is documented in [`receipts/MTP_V3_BLOCKER.md`](receipts/MTP_V3_BLOCKER.md). It corrected the short target multi-row graph but did not pass the strict 47.7K MTP identity gate. The launch template remains [`../scripts/launch-working-base.sh`](../scripts/launch-working-base.sh). It pins the accepted MTP-OFF binary, model bytes, and inference arguments.

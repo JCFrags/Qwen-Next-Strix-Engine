@@ -30,6 +30,7 @@ The repository now contains:
 - public build-validation receipts for the pinned mainline HIP and Vulkan builds;
 - a reproducible, host-neutral [working-base launch profile](docs/WORKING_BASE.md);
 - the reviewed [working-base receipt](docs/receipts/WORKING_BASE_V1.md), [current status](docs/CURRENT_STATUS.md), and [experiment ledger](docs/EXPERIMENT_LEDGER.md);
-- an attributed, inactive [experimental MTP candidate patch](patches/experimental/mtp-v1/README.md).
+- an attributed, inactive [experimental MTP candidate patch](patches/experimental/mtp-v1/README.md);
+- an inactive [MTP v3 graph correction](patches/experimental/mtp-v3-graph/README.md) and [long-context blocker receipt](docs/receipts/MTP_V3_BLOCKER.md).
 
-The exact base profile passed the strict recurrent cache gate and a real 12-tool Pi loop. MTP is blocked and disabled. Vision and context above 65,536 tokens remain unqualified.
+The exact base profile passed the strict recurrent cache gate and a real 12-tool Pi loop. MTP v3 passed short identity controls but failed the strict 47.7K full-content gate. MTP remains blocked and disabled. Vision and context above 65,536 tokens remain unqualified.

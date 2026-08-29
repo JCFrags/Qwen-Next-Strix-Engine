@@ -8,6 +8,8 @@ Public entries contain decisions and safe aggregate evidence only. Private promp
 | 2026-08-29 | Candidate v1 `1baf32a…` | HIP, exact Q4_K_XL, 65,536, one slot, Q8_0 K/V, 4,096/2,052, MTP off, vision off | `PASS_WORKING_BASE` | Strict recurrent cache gate and real Pi loop passed. |
 | 2026-08-29 | Candidate v1 `1baf32a…` | Same base plus exact EasiiX 34-tensor MTP sidecar | `BLOCKED_MTP_OUTPUT_IDENTITY` | MTP-ON diverged from OFF at generated tokens 32/31/32. Request 3 emitted another configured marker. Draft maxima 1 and 4 gave the same divergent bytes. Keep MTP disabled. |
 | 2026-08-29 | Candidate v2 `rs0` | MTP rollback experiment | `NO_RUNTIME_CHANGE` | Do not export. Do not claim a rollback correction. |
+| 2026-08-29 | Candidate v3 `53a2643…` | Corrected Qwen4Exp multi-row graph; short n-gram and pure-MTP controls | `PASS_SHORT_IDENTITY` | Full bytes matched OFF at MTP maxima 1 and 4. This result did not qualify long context. |
+| 2026-08-29 | Candidate v3 `53a2643…` | Exact Q4_K_XL, 65,536, 4,096/2,052, strict 47.7K MTP OFF/ON | `BLOCKED_LONG_CONTEXT_OUTPUT_IDENTITY` | OFF passed four requests. Pure MTP diverged on request 1 at byte offset 145 after 42 accepted and 10 rejected drafts. Keep MTP disabled. |
 | 2026-08-29 | Vision | Working-base runtime | `UNQUALIFIED` | Projector omitted. |
 | 2026-08-29 | Higher context | Above 65,536 | `UNQUALIFIED` | Requires a new strict campaign. |
 

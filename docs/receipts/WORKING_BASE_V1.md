@@ -61,6 +61,8 @@ Candidate v1 MTP-ON used the exact EasiiX 34-tensor sidecar and exercised recurr
 
 These results do not prove that the candidate's MTP rollback patch works. The exported candidate patch is inactive and experimental. Candidate v2 `rs0` is not exported because it did not change runtime behavior.
 
+Candidate v3 corrected short multi-row target identity. It still failed the first 47.7K MTP request while MTP-OFF passed the complete four-request gate. Pure MTP reproduced the defect, including 42 accepted and 10 rejected drafts. Keep MTP disabled. See [`MTP_V3_BLOCKER.md`](MTP_V3_BLOCKER.md).
+
 ## Limits
 
 - This receipt qualifies only the fixed base profile.
