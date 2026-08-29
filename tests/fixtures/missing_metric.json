@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "profile_id": "qwen38-flash-next-strix-v1",
+  "campaign_id": "offline-test",
+  "case_id": "admission_snapshot",
+  "gate": "admission",
+  "status": "pass",
+  "checks": {
+    "active_model_and_graphics_processes_recorded": true,
+    "kfd_hmm_and_gtt_owners_recorded": true,
+    "memory_swap_and_gtt_recorded": true,
+    "inference_ports_recorded": true,
+    "expected_source_binary_launch_recorded": true,
+    "no_conflicting_large_model": true
+  },
+  "metrics": {
+    "memory": {
+      "mem_available_bytes": 1000,
+      "swap_bytes": 0
+    }
+  }
+}

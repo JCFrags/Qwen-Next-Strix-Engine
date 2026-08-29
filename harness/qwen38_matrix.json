@@ -1,0 +1,408 @@
+{
+  "schema_version": 1,
+  "profile_id": "qwen38-flash-next-strix-v1",
+  "static_cases": [
+    {
+      "case_id": "admission_snapshot",
+      "gate": "admission",
+      "required_checks": [
+        "active_model_and_graphics_processes_recorded",
+        "kfd_hmm_and_gtt_owners_recorded",
+        "memory_swap_and_gtt_recorded",
+        "inference_ports_recorded",
+        "expected_source_binary_launch_recorded",
+        "no_conflicting_large_model"
+      ],
+      "required_metrics": [
+        "memory.mem_available_bytes",
+        "memory.swap_bytes",
+        "memory.gtt_bytes",
+        "processes.snapshot_sha256",
+        "memory.owners_snapshot_sha256",
+        "ports.snapshot_sha256",
+        "expected_runtime.sha256"
+      ]
+    },
+    {
+      "case_id": "a_build_and_feature_off",
+      "gate": "A",
+      "required_checks": [
+        "source_commit_and_patch_hashes_recorded",
+        "gfx1151_present_in_compile_command",
+        "binary_and_loaded_hip_library_hashes_recorded",
+        "backend_operation_tests_pass",
+        "feature_off_matches_selected_baseline",
+        "server_health_and_model_metadata_pass",
+        "no_unexpected_fallback"
+      ],
+      "required_metrics": [
+        "source.commit",
+        "source.patchset_sha256",
+        "compile.command_sha256",
+        "binary.sha256",
+        "backend_library.sha256",
+        "launch.sha256",
+        "server.fallback_count"
+      ]
+    },
+    {
+      "case_id": "b_short_133",
+      "gate": "B",
+      "required_checks": [
+        "exact_expected_answer",
+        "no_malformed_text"
+      ]
+    },
+    {
+      "case_id": "b_small_718",
+      "gate": "B",
+      "required_checks": [
+        "exact_expected_answer",
+        "stable_repeat"
+      ]
+    },
+    {
+      "case_id": "b_boundary_2668",
+      "gate": "B",
+      "required_checks": [
+        "meaningful_expected_language_output",
+        "no_noise_repetition_empty_or_malformed_output"
+      ]
+    },
+    {
+      "case_id": "b_boundary_6568",
+      "gate": "B",
+      "required_checks": [
+        "meaningful_expected_language_output",
+        "no_noise_repetition_empty_or_malformed_output"
+      ]
+    },
+    {
+      "case_id": "b_medium_8k",
+      "gate": "B",
+      "required_checks": [
+        "correct_keyed_recall",
+        "stable_output"
+      ]
+    },
+    {
+      "case_id": "b_depth_32k",
+      "gate": "B",
+      "required_checks": [
+        "correct_early_recall",
+        "correct_suffix_recall"
+      ]
+    },
+    {
+      "case_id": "b_working_47_7k",
+      "gate": "B",
+      "required_checks": [
+        "full_a_b_a_sequence_passes",
+        "greedy_sequence_matches_reference_or_reviewed_correction"
+      ]
+    },
+    {
+      "case_id": "c_47_7k_a_b_a_slot_sequence",
+      "gate": "C",
+      "required_checks": [
+        "fresh_a_returns_early_key_and_final_value",
+        "common_prefix_b_returns_b_not_a",
+        "return_to_a_returns_a_not_b_or_early_phrase",
+        "save_restore_repeat_passes",
+        "post_short_request_repeat_passes",
+        "no_phantom_value"
+      ]
+    },
+    {
+      "case_id": "d_high_acceptance",
+      "gate": "D",
+      "required_checks": [
+        "target_output_matches_feature_off",
+        "recurrent_state_correct"
+      ],
+      "required_metrics": [
+        "mtp.accepted_tokens",
+        "mtp.drafted_tokens"
+      ]
+    },
+    {
+      "case_id": "d_low_acceptance",
+      "gate": "D",
+      "required_checks": [
+        "target_output_matches_feature_off",
+        "recurrent_state_correct"
+      ],
+      "required_metrics": [
+        "mtp.accepted_tokens",
+        "mtp.drafted_tokens"
+      ]
+    },
+    {
+      "case_id": "d_forced_first_draft_rejection",
+      "gate": "D",
+      "required_checks": [
+        "target_output_matches_feature_off",
+        "recurrent_state_correct",
+        "first_draft_rejection_observed"
+      ],
+      "required_metrics": [
+        "mtp.accepted_tokens",
+        "mtp.drafted_tokens"
+      ]
+    },
+    {
+      "case_id": "d_partial_acceptance_then_rejection",
+      "gate": "D",
+      "required_checks": [
+        "target_output_matches_feature_off",
+        "recurrent_state_correct",
+        "partial_acceptance_then_rejection_observed"
+      ],
+      "required_metrics": [
+        "mtp.accepted_tokens",
+        "mtp.drafted_tokens"
+      ]
+    },
+    {
+      "case_id": "d_prompt_switch_after_long_generation",
+      "gate": "D",
+      "required_checks": [
+        "target_output_matches_feature_off",
+        "recurrent_state_correct"
+      ],
+      "required_metrics": [
+        "mtp.accepted_tokens",
+        "mtp.drafted_tokens"
+      ]
+    },
+    {
+      "case_id": "d_return_to_prior_prefix",
+      "gate": "D",
+      "required_checks": [
+        "target_output_matches_feature_off",
+        "recurrent_state_correct"
+      ],
+      "required_metrics": [
+        "mtp.accepted_tokens",
+        "mtp.drafted_tokens"
+      ]
+    },
+    {
+      "case_id": "d_target_state_save_restore",
+      "gate": "D",
+      "required_checks": [
+        "target_output_matches_feature_off",
+        "recurrent_state_correct",
+        "save_restore_identity_matches"
+      ],
+      "required_metrics": [
+        "mtp.accepted_tokens",
+        "mtp.drafted_tokens"
+      ]
+    },
+    {
+      "case_id": "d_draft_cannot_partial_rollback",
+      "gate": "D",
+      "required_checks": [
+        "target_output_matches_feature_off",
+        "recurrent_state_correct",
+        "fail_closed_or_full_recompute_observed"
+      ],
+      "required_metrics": [
+        "mtp.accepted_tokens",
+        "mtp.drafted_tokens"
+      ]
+    },
+    {
+      "case_id": "e_append",
+      "gate": "E",
+      "condition": "qsa_cache_enabled",
+      "required_checks": [
+        "positive_extend_from_valid_watermark",
+        "invalid_watermark_invalidates_or_recomputes"
+      ]
+    },
+    {
+      "case_id": "e_truncate",
+      "gate": "E",
+      "condition": "qsa_cache_enabled",
+      "required_checks": [
+        "positive_truncate_removes_summaries_beyond_boundary",
+        "invalid_boundary_invalidates_or_recomputes"
+      ]
+    },
+    {
+      "case_id": "e_mtp_rejection",
+      "gate": "E",
+      "condition": "qsa_cache_enabled",
+      "required_checks": [
+        "positive_target_and_summary_rollback_together",
+        "invalid_rollback_invalidates_or_recomputes"
+      ]
+    },
+    {
+      "case_id": "e_prompt_switch",
+      "gate": "E",
+      "condition": "qsa_cache_enabled",
+      "required_checks": [
+        "positive_verified_common_prefix_reused",
+        "invalid_prefix_not_reused"
+      ]
+    },
+    {
+      "case_id": "e_slot_clear",
+      "gate": "E",
+      "condition": "qsa_cache_enabled",
+      "required_checks": [
+        "positive_all_slot_summaries_removed",
+        "invalid_stale_summary_not_reused"
+      ]
+    },
+    {
+      "case_id": "e_context_reset",
+      "gate": "E",
+      "condition": "qsa_cache_enabled",
+      "required_checks": [
+        "positive_watermark_and_storage_reset",
+        "invalid_old_context_not_reused"
+      ]
+    },
+    {
+      "case_id": "e_state_save",
+      "gate": "E",
+      "condition": "qsa_cache_enabled",
+      "required_checks": [
+        "positive_version_watermark_keys_and_identity_saved",
+        "invalid_incomplete_state_rejected"
+      ]
+    },
+    {
+      "case_id": "e_state_restore",
+      "gate": "E",
+      "condition": "qsa_cache_enabled",
+      "required_checks": [
+        "positive_all_fields_restored",
+        "invalid_or_incompatible_state_fails_closed_and_recomputes"
+      ]
+    },
+    {
+      "case_id": "g_direct_openai_text",
+      "gate": "G",
+      "required_checks": [
+        "response_correct",
+        "reasoning_parsed_correctly"
+      ]
+    },
+    {
+      "case_id": "g_pi_provider",
+      "gate": "G",
+      "required_checks": [
+        "response_correct",
+        "reasoning_parsed_correctly"
+      ]
+    },
+    {
+      "case_id": "g_pi_file_marker_tool_loop",
+      "gate": "G",
+      "required_checks": [
+        "exact_marker_returned",
+        "tools_executed_in_required_order",
+        "reasoning_parsed_correctly"
+      ]
+    },
+    {
+      "case_id": "g_pi_multistep_reused_prefix",
+      "gate": "G",
+      "required_checks": [
+        "response_correct",
+        "tools_executed_in_required_order",
+        "reused_prefix_observed",
+        "reasoning_parsed_correctly"
+      ]
+    },
+    {
+      "case_id": "g_vision_red_and_blue_square",
+      "gate": "G",
+      "required_checks": [
+        "red_square_response_correct",
+        "blue_square_response_correct",
+        "f16_projector_identity_recorded"
+      ],
+      "required_metrics": [
+        "projector.sha256"
+      ]
+    },
+    {
+      "case_id": "g_server_log_review",
+      "gate": "G",
+      "required_checks": [
+        "no_state_error",
+        "no_allocation_error",
+        "no_unexpected_fallback"
+      ],
+      "required_metrics": [
+        "server.warning_count",
+        "server.fallback_count"
+      ]
+    },
+    {
+      "case_id": "h_stability_and_rollback",
+      "gate": "H",
+      "required_checks": [
+        "no_server_crash",
+        "no_gpu_reset_or_device_loss",
+        "no_swap_use",
+        "no_unexplained_memory_growth",
+        "no_conflicting_model_process",
+        "baseline_stop_start_succeeds",
+        "candidate_and_baseline_paths_unambiguous"
+      ],
+      "required_metrics": [
+        "memory.swap_bytes",
+        "memory.growth_bytes",
+        "server.crash_count",
+        "gpu.reset_count"
+      ]
+    }
+  ],
+  "performance": {
+    "depths": [
+      "shallow",
+      "8k",
+      "32k",
+      "47.7k"
+    ],
+    "minimum_usable_pairs_per_depth": 3,
+    "decision_depth": "47.7k",
+    "required_checks": [
+      "request_completed",
+      "output_matches_correctness_reference",
+      "no_unexpected_warning_or_fallback"
+    ],
+    "required_metrics": [
+      "prompt_tokens",
+      "prompt_tokens_per_second",
+      "generated_tokens",
+      "generated_tokens_per_second",
+      "time_to_first_token_ms",
+      "inter_token_latency_ms.p50",
+      "inter_token_latency_ms.p95",
+      "inter_token_latency_ms.max",
+      "mtp.accepted_tokens",
+      "mtp.drafted_tokens",
+      "prompt.reused_tokens",
+      "prompt.new_tokens",
+      "gpu.utilization_percent",
+      "gpu.clock_mhz",
+      "memory.gtt_bytes",
+      "memory.mem_available_bytes",
+      "memory.swap_bytes",
+      "server.warning_count",
+      "server.fallback_count"
+    ],
+    "targets": {
+      "prompt_tokens_per_second": 345.0,
+      "generated_tokens_per_second": 28.0
+    }
+  }
+}
